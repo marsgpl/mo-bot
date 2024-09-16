@@ -56,7 +56,19 @@ hpPerFood: how much hp recovered per piece of food eaten
 ## Digitalocean
 
 ```
-apt-get update
-apt-get upgrade -y
-apt-get install nodejs npm -y
+ssh root@xx.xx.xx.xx
+    apt-get update
+    apt-get upgrade -y
+    apt-get install nodejs npm -y
+    useradd -m -s /bin/bash bot
+    su bot
+    cd
+    ssh-keygen -t rsa # then add ssh key to github
+    git clone git@github.com:marsgpl/mo-bot.git
+    cd mo-bot
+    npm ci
+    cp config.example.json config.json
+    nohup npm start > bot.log 2>&1 &
+    watch -n 1 -- tail -n 40 bot.log
+    df -h
 ```
