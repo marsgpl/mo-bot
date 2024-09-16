@@ -44,11 +44,12 @@ function onSkill(this: Client, { skill, xp, level, current }: {
         const xpDelta = xp - prev.xp
         const lvlDelta = level - prev.level
 
-        if (xpDelta !== 0) {
-            console.log(skill,
-                xpDelta > 0 ? 'gained' : 'lost',
-                xpDelta, 'xp')
-        }
+        // takes too much space
+        // if (xpDelta !== 0) {
+        //     console.log(skill,
+        //         xpDelta > 0 ? 'gained' : 'lost',
+        //         xpDelta, 'xp')
+        // }
 
         if (lvlDelta !== 0) {
             console.log(skill,
