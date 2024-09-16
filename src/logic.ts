@@ -484,7 +484,7 @@ function followChestPath(client: Client) {
     wait(20).then(() => {
         const { i, j } = tile
         client.send('move', { i, j, t: Date.now() })
-        console.log('🟠', JSON.stringify({ i, j, t: Date.now() }))
+        // console.log('🟠', JSON.stringify({ i, j, t: Date.now() }))
         pathWaitForConfirm = true
         lastPathTile = tile
     })
@@ -515,7 +515,7 @@ function followMobPath(client: Client) {
     wait(20).then(() => {
         const { i, j } = tile
         client.send('move', { i, j, t: Date.now() })
-        console.log('🟠', JSON.stringify({ i, j, t: Date.now() }))
+        // console.log('🟠', JSON.stringify({ i, j, t: Date.now() }))
         pathWaitForConfirm = true
         lastPathTile = tile
 
