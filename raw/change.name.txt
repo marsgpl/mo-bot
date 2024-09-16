@@ -1,0 +1,5 @@
+5:::{"name":"rename","args":[{"sub":"account_check","name":"margus","sk":"xx"}]}
+4:::{"action":"rename","sub":"account_check","name":"margus","exists":true}
+
+5:::{"name":"rename","args":[{"sub":"action","name":"margus","current_pass":"xx","new_pass":"xx","sk":"xx"}]}
+4:::{"action":"rename","sub":"action","status":"exists"}

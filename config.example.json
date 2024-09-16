@@ -1,0 +1,15 @@
+{
+    "loaderUrl": "https://rpg.mo.ee/",
+    "wsHost": "rpg-de3.mo.ee",
+    "username": "margus",
+    "password": "123456",
+    "fingerprint": "ffffffffffffffffffffffffffffffff",
+    "tz": "America/Toronto",
+    "tzOffsetHours": 0,
+    "lang": "ee",
+    "antiCaptchaApiKey": "ffffffffffffffffffffffffffffffff",
+    "mapId": 11,
+    "monstersIds": [11, 22, 33],
+    "foodId": 44,
+    "hpPerFood": 5
+}

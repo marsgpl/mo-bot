@@ -1,0 +1,2 @@
+5:::{"name":"message","args":[{"data":"123","lang":"","sk":"xxx"}]}
+4:::{"action":"message","data":{"type":"chat","message":{"text":"123","user":"xx","color":"#CCFFFF","type":"chat","lang":"EN","id":"EN_40936619"}}}

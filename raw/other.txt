@@ -1,0 +1,14 @@
+attack_player { player: name }
+run_from_fight {}
+whois { id: playerId }
+combat_style { mode: "0-3" }
+event { e: "log id" }
+open_treasure_chest { target: }
+teleport_book { name: }
+secret_boss_scroll { name: }
+request_logout { world: 3 }
+toggle_run { run: true }
+toggle_multicombat { block_multicombat: true }
+guild { sub: "visit" }
+guild { sub: "create", type: "coins" }
+guild { sub: "create", type: "mos" }
