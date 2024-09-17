@@ -49,20 +49,19 @@ let targetMobPos: Position | undefined = undefined
 let pathWaitForConfirm = false
 let wfbTmt: NodeJS.Timeout | undefined = undefined
 let wfChestWithdrawTmt: NodeJS.Timeout | undefined = undefined
+let wfChestOpenTmt: NodeJS.Timeout | undefined = undefined
 let lastEatTime: number | undefined = undefined
 
 export function logic(client: Client, event: LogicEvent) {
     if (client.isDisconnected) {
         console.log('logic called but ws is disconnected')
-        wfbTmt && clearTimeout(wfbTmt)
-        wfChestWithdrawTmt && clearTimeout(wfChestWithdrawTmt)
+        clearAllTmts()
         return
     }
 
     if (client.busyWithCaptcha) {
         console.log('logic called but captcha is active. queuing')
-        wfbTmt && clearTimeout(wfbTmt)
-        wfChestWithdrawTmt && clearTimeout(wfChestWithdrawTmt)
+        clearAllTmts()
         return queue.push(event)
     }
 
@@ -86,6 +85,23 @@ export function logic(client: Client, event: LogicEvent) {
         case LogicGoal.WAIT_FOR_CHEST_DEPOSIT: return waitForChestDeposit(client, event)
         case LogicGoal.WAIT_FOR_CHEST_WITHDRAW: return waitForChestWithdraw(client, event)
         default: throw Error('unknown goal', { cause: { goal, event } })
+    }
+}
+
+function clearAllTmts() {
+    if (wfbTmt) {
+        clearTimeout(wfbTmt)
+        wfbTmt = undefined
+    }
+
+    if (wfChestWithdrawTmt) {
+        clearTimeout(wfChestWithdrawTmt)
+        wfChestWithdrawTmt = undefined
+    }
+
+    if (wfChestOpenTmt) {
+        clearTimeout(wfChestOpenTmt)
+        wfChestOpenTmt = undefined
     }
 }
 
@@ -116,6 +132,8 @@ function waitForChestOpen(client: Client, event: LogicEvent) {
 }
 
 function onChestWithdrawDone(client: Client) {
+    clearAllTmts()
+
     const freeSlots = TOTAL_INVENTORY_SLOTS - client.inventory!.length
     const notEnoughFreeSlots = freeSlots < MIN_FREE_INVENTORY_SLOTS
 
@@ -145,6 +163,8 @@ function onChestWithdrawDone(client: Client) {
 
 // 5:::{"name":"chest_withdraw","args":[{"item_id":115,"item_slot":113,"target_id":11545,"target_i":49,"target_j":47,"amount":12,"sk":"xx"}]}
 function onChestDepositDone(client: Client) {
+    clearAllTmts()
+
     const { chest } = client.map!
     const { foodId } = client.config
 
@@ -181,11 +201,13 @@ function onChestDepositDone(client: Client) {
     })
 
     goal = LogicGoal.WAIT_FOR_CHEST_WITHDRAW
-    wfChestWithdrawTmt && clearTimeout(wfChestWithdrawTmt)
+
+    clearAllTmts()
+
     wfChestWithdrawTmt = setTimeout(() => {
-        console.log('chest too slow, rechesting')
+        console.log('chest withdrawal is too slow, rechesting')
         wantChest(client)
-    }, 1000)
+    }, 2000)
 }
 
 // 5:::{"name":"chest_deposit_all","args":[{"target_id":11545,"target_i":49,"target_j":47,"avoid_list":{},"sk":"xx"}]}
@@ -227,8 +249,8 @@ function waitForBattle(client: Client, event: LogicEvent) {
 }
 
 function onBattleStart(client: Client) {
-    wfbTmt && clearTimeout(wfbTmt)
-    wfChestWithdrawTmt && clearTimeout(wfChestWithdrawTmt)
+    clearAllTmts()
+
     console.log('fighting with:', client.enemyTargetId)
     goal = LogicGoal.WAIT_FOR_WIN
 }
@@ -402,6 +424,13 @@ function doChestStuff(client: Client) {
     console.log('accessing chest')
     client.send('access_chest', { target_id: 11545 })
     goal = LogicGoal.WAIT_FOR_CHEST_OPEN
+
+    clearAllTmts()
+
+    wfChestOpenTmt = setTimeout(() => {
+        console.log('chest access is too slow, rechesting')
+        wantChest(client)
+    }, 2000)
 }
 
 function wantToFindEnemy(client: Client) {
@@ -488,9 +517,7 @@ function followChestPath(client: Client) {
     const tile = path.pop()
 
     if (!tile) {
-        console.log('path is over, accessing chest')
-        doChestStuff(client)
-        return
+        return doChestStuff(client)
     }
 
     wait(40).then(() => {
@@ -518,8 +545,13 @@ function followMobPath(client: Client) {
         }
 
         goal = LogicGoal.WAIT_FOR_BATTLE
-        wfbTmt && clearTimeout(wfbTmt)
-        wfbTmt = setTimeout(() => waitForBattleTooLong(client), 2000)
+
+        clearAllTmts()
+
+        wfbTmt = setTimeout(() => {
+            console.log('wait for battle for too long, rebattling')
+            wantToCheckMissingHp(client)
+        }, 2000)
 
         return
     }
@@ -535,9 +567,4 @@ function followMobPath(client: Client) {
             client.send('set_target', { target: mobTargetId })
         }
     })
-}
-
-function waitForBattleTooLong(client: Client) {
-    console.log('wait for battle for too long, rebattling')
-    return wantToCheckMissingHp(client)
 }
