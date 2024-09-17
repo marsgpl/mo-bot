@@ -1,3 +1,5 @@
+ws: unknown action: {"action":"level_up","data":"strength","level":74}
+
 -------------------------------------
 ws: unknown action: {"action":"show_rules","with_callback":true}
 ----------------------------------------

@@ -47,6 +47,7 @@ export function onMyData(this: Client, payload: KeyValue) {
     const meleeBlockPercent = getNumber(temp, 'melee_block')
     const petEnabled = getBoolean(pet, 'enabled')
     const isUnderReview = getBoolean(temp, 'review')
+    const isUnderPenalty = getBoolean(temp, 'penalty')
     const inventory = getArray(temp, 'inventory') as MoInvSlot[]
     const petInventory = petEnabled ? getArray(pet, 'chest') as MoInvSlot[] : []
 
@@ -163,6 +164,12 @@ export function onMyData(this: Client, payload: KeyValue) {
     this.petEnabled = petEnabled
     this.inventory = inventory
     this.petInventory = petInventory
+
+    if (isUnderPenalty) {
+        logic(this, LogicEvent.PENALTY_START)
+    } else {
+        logic(this, LogicEvent.PENALTY_END)
+    }
 
     onHealthDelta(this, { curHealth, maxHealth })
 

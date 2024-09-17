@@ -26,6 +26,8 @@ export const enum LogicEvent {
     MY_DATA = 'MY_DATA', // server sends my_data if action failed
     CHEST_OPENED = 'CHEST_OPENED', // now we can withdraw and deposit
     INVENTORY_CHANGED = 'INVENTORY_CHANGED',
+    PENALTY_START = 'PENALTY_START',
+    PENALTY_END = 'PENALTY_END',
 }
 
 const enum LogicGoal {
@@ -51,6 +53,7 @@ let wfbTmt: NodeJS.Timeout | undefined = undefined
 let wfChestWithdrawTmt: NodeJS.Timeout | undefined = undefined
 let wfChestOpenTmt: NodeJS.Timeout | undefined = undefined
 let lastEatTime: number | undefined = undefined
+let underCaptchaAboutToStart: boolean = false
 
 export function logic(client: Client, event: LogicEvent) {
     if (client.isDisconnected) {
@@ -59,7 +62,7 @@ export function logic(client: Client, event: LogicEvent) {
         return
     }
 
-    if (client.busyWithCaptcha) {
+    if (client.busyWithCaptcha || underCaptchaAboutToStart) {
         console.log('logic called but captcha is active. queuing')
         clearAllTmts()
         return queue.push(event)
@@ -71,6 +74,8 @@ export function logic(client: Client, event: LogicEvent) {
         case LogicEvent.ATTACKING: return onBattleStart(client)
         case LogicEvent.DEFENDING: return onBattleStart(client)
         case LogicEvent.CAPTCHA_DONE: return onCaptchaDone(client)
+        case LogicEvent.PENALTY_START: return onCaptchaAboutToStart()
+        case LogicEvent.PENALTY_END: return onCaptchaDone(client)
     }
 
     switch (goal) {
@@ -81,11 +86,19 @@ export function logic(client: Client, event: LogicEvent) {
         case LogicGoal.WAIT_FOR_BATTLE: return waitForBattle(client, event)
         case LogicGoal.WAIT_FOR_WIN: return waitForWin(client, event)
         case LogicGoal.WAIT_FOR_HEAL: return waitForHeal(client, event)
-        case LogicGoal.WAIT_FOR_CHEST_OPEN: return waitForChestOpen(client, event)
-        case LogicGoal.WAIT_FOR_CHEST_DEPOSIT: return waitForChestDeposit(client, event)
-        case LogicGoal.WAIT_FOR_CHEST_WITHDRAW: return waitForChestWithdraw(client, event)
-        default: throw Error('unknown goal', { cause: { goal, event } })
+        case LogicGoal.WAIT_FOR_CHEST_OPEN:
+            return waitForChestOpen(client, event)
+        case LogicGoal.WAIT_FOR_CHEST_DEPOSIT:
+            return waitForChestDeposit(client, event)
+        case LogicGoal.WAIT_FOR_CHEST_WITHDRAW:
+            return waitForChestWithdraw(client, event)
+        default:
+            throw Error('unknown goal', { cause: { goal, event } })
     }
+}
+
+function onCaptchaAboutToStart() {
+    underCaptchaAboutToStart = true
 }
 
 function clearAllTmts() {
@@ -106,11 +119,15 @@ function clearAllTmts() {
 }
 
 function onCaptchaDone(client: Client) {
+    underCaptchaAboutToStart = false
+
     while (queue.length) {
         const event = queue.shift()!
         console.log('processing queue event:', event)
         logic(client, event)
     }
+
+    logic(client, LogicEvent.CONFIRM)
 }
 
 function waitForChestWithdraw(client: Client, event: LogicEvent) {
@@ -523,7 +540,7 @@ function followChestPath(client: Client) {
     wait(40).then(() => {
         const { i, j } = tile
         client.send('move', { i, j, t: Date.now() })
-        // console.log('🟠', JSON.stringify({ i, j, t: Date.now() }))
+        console.log('🟠', JSON.stringify({ i, j, t: Date.now() }))
         pathWaitForConfirm = true
         lastPathTile = tile
     })
@@ -559,7 +576,7 @@ function followMobPath(client: Client) {
     wait(40).then(() => {
         const { i, j } = tile
         client.send('move', { i, j, t: Date.now() })
-        // console.log('🟠', JSON.stringify({ i, j, t: Date.now() }))
+        console.log('🟠', JSON.stringify({ i, j, t: Date.now() }))
         pathWaitForConfirm = true
         lastPathTile = tile
 
