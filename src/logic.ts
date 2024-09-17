@@ -531,6 +531,7 @@ function wantToFindEnemy(client: Client) {
 }
 
 function followChestPath(client: Client) {
+    console.log(Date, 'followChestPath called')
     const tile = path.pop()
 
     if (!tile) {
