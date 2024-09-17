@@ -76,9 +76,11 @@ export function sendEnglishTgBot(client: Client, text: string) {
     } = client.config
 
     if (englishTgBotMention
+        && englishTgBotAdminUsername
         && text.toLowerCase().match(englishTgBotMention.toLowerCase())
+        && text.substring(englishTgBotAdminUsername.length + 1) !== englishTgBotAdminUsername + ':'
     ) {
-        text += ' @' + client.config.englishTgBotAdminUsername
+        text += ' @' + englishTgBotAdminUsername
     }
 
     client.englishTgBot.bot.sendMessage(englishTgBotAdminId!, text)
