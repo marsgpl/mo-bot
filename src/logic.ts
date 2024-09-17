@@ -493,7 +493,7 @@ function followChestPath(client: Client) {
         return
     }
 
-    wait(1).then(() => {
+    wait(40).then(() => {
         const { i, j } = tile
         client.send('move', { i, j, t: Date.now() })
         // console.log('🟠', JSON.stringify({ i, j, t: Date.now() }))
@@ -524,7 +524,7 @@ function followMobPath(client: Client) {
         return
     }
 
-    wait(1).then(() => {
+    wait(40).then(() => {
         const { i, j } = tile
         client.send('move', { i, j, t: Date.now() })
         // console.log('🟠', JSON.stringify({ i, j, t: Date.now() }))
