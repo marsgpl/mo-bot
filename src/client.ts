@@ -44,6 +44,7 @@ import { onItemDrop } from './client/onItemDrop.js'
 import { onCaptcha } from './client/onCaptcha.js'
 import { onCaptchaResponse } from './client/onCaptchaResponse.js'
 import { onCaptchaBonus } from './client/onCaptchaBonus.js'
+import { EnglishTgBot } from './englishTgBot.js'
 
 export interface ClientMap {
     matrix: number[][]
@@ -116,6 +117,7 @@ export interface Client extends ClientProps {
     canRefreshCaptcha: boolean
     map?: ClientMap
     enemyTargetId?: string | number
+    englishTgBot: EnglishTgBot | null
 }
 
 export interface OnWsMsgProps {
@@ -132,6 +134,7 @@ export function newClient(props: ClientProps): Client {
         missingMobs: new Set(),
         busyWithCaptcha: false,
         canRefreshCaptcha: true,
+        englishTgBot: null
     }
 
     client.send = send.bind(client)

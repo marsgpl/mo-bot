@@ -2,6 +2,7 @@ import { readFile } from 'node:fs/promises'
 import {
     isKeyValue,
     isNumber,
+    isOptNumber,
     isOptString,
     isString,
 } from './guards.js'
@@ -20,6 +21,10 @@ export interface Config {
     monstersIds: number[]
     foodId: number
     hpPerFood: number
+    englishTgBotToken?: string
+    englishTgBotAdminUsername?: string
+    englishTgBotAdminId?: number
+    englishTgBotMention?: string
 }
 
 export interface ReadConfigProps {
@@ -57,5 +62,9 @@ function isConfig(config: unknown): config is Config {
         && Array.isArray(config.monstersIds)
         && isNumber(config.foodId)
         && isNumber(config.hpPerFood)
+        && isOptString(config.englishTgBotToken)
+        && isOptString(config.englishTgBotAdminUsername)
+        && isOptNumber(config.englishTgBotAdminId)
+        && isOptString(config.englishTgBotMention)
     )
 }

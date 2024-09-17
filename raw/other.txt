@@ -21,3 +21,8 @@ optimize timeouts
 hardcoded chest id fix
 refactor client.map format - include targetIds
 refactor position-to-string thing, use hash-to-number
+
+telegram bot notification: whisper, captcha, lvl up
+    on whisper reply: send whisper back
+telegram bot notification 2: whole EN chat
+    on reply: send EN

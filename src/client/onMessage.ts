@@ -3,6 +3,7 @@ import type { KeyValue } from '../guards.js'
 import { isKeyValue, isString } from '../guards.js'
 import { getKeyValue, getString } from '../getters.js'
 import { SEP } from '../headers.js'
+import { sendEnglishTgBot } from '../englishTgBot.js'
 
 // 4:::{"action":"message","data":{"key":"Current experience rate is 2x","color":"#3BEEEE","variables":{"ns":"interface"}}}
 // 4:::{"action":"message","data":{"key":"No active experience event","variables":{"ns":"interface"},"color":"#3BEEEE"}}
@@ -11,7 +12,8 @@ export function onMessage(this: Client, payload: KeyValue) {
     const data = getKeyValue(payload, 'data')
 
     if (data.key) { // system message
-        console.log('🤖', getSysMsg(data.key, data.variables))
+        console.log(getSysMsg(data.key, data.variables))
+        sendEnglishTgBot(this, getSysMsg(data.key, data.variables))
     } else if (data.type === 'chat') {
         const message = getKeyValue(data, 'message')
         const user = getString(message, 'user')
@@ -20,6 +22,7 @@ export function onMessage(this: Client, payload: KeyValue) {
 
         if (lang === 'EN') {
             console.log(`[${lang}]`, user + ':', text)
+            sendEnglishTgBot(this, user + ': ' + text)
         } else {
             // filter out other langs
         }
@@ -39,7 +42,7 @@ function getSysMsg(key: unknown, vars: unknown): string {
             isKeyValue(v) ? JSON.stringify(v) : String(v))
     })
 
-    return key
+    return '🤖 ' + key
 }
 
 // 4:::{"action":"message","data":{"key":"You have {count} unaccepted item in market.","color":"#3BEEEE","variables":{"ns":"interface","count":123}}}

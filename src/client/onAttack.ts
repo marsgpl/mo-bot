@@ -23,11 +23,11 @@ export function onAttack(this: Client, payload: KeyValue) {
     }
 
     if (defender === this.playerId) {
-        console.log('🛡️', 'defending from', name, 'at', posToStr(pos))
+        console.log('🛡️  defending from', name, 'at', posToStr(pos))
         this.enemyTargetId = enemyTargetId
         logic(this, LogicEvent.DEFENDING)
     } else if (attacker === this.playerId) {
-        console.log('⚔️', 'attacking', name, 'at', posToStr(pos))
+        console.log('⚔️  attacking', name, 'at', posToStr(pos))
         this.enemyTargetId = enemyTargetId
         logic(this, LogicEvent.ATTACKING)
     } else {

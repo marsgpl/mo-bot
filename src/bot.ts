@@ -14,6 +14,7 @@ import { isMoWsId } from './mo.js'
 import { newAntiCaptcha } from './captcha.js'
 import { matchNumber, matchString } from './getters.js'
 import { isKeyValue } from './guards.js'
+import { newEnglishTgBot } from './englishTgBot.js'
 
 const config = await readConfig({
     path: 'config.json',
@@ -169,6 +170,8 @@ const client = newClient({
     antiCaptcha,
     loaderProps,
 })
+
+client.englishTgBot = newEnglishTgBot(client)
 
 ws.on('error', error => {
     throw Error('ws error', { cause: error })
