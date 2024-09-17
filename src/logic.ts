@@ -66,7 +66,7 @@ export function logic(client: Client, event: LogicEvent) {
         return queue.push(event)
     }
 
-    console.log('🟣', 'logic event:', event)
+    // console.log('🟣', 'logic event:', event)
 
     switch (event) {
         case LogicEvent.ATTACKING: return onBattleStart(client)
@@ -489,7 +489,7 @@ function followChestPath(client: Client) {
         return
     }
 
-    wait(40).then(() => {
+    wait(80).then(() => {
         const { i, j } = tile
         client.send('move', { i, j, t: Date.now() })
         // console.log('🟠', JSON.stringify({ i, j, t: Date.now() }))
@@ -520,7 +520,7 @@ function followMobPath(client: Client) {
         return
     }
 
-    wait(40).then(() => {
+    wait(80).then(() => {
         const { i, j } = tile
         client.send('move', { i, j, t: Date.now() })
         // console.log('🟠', JSON.stringify({ i, j, t: Date.now() }))
