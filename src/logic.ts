@@ -378,8 +378,6 @@ function wantChest(client: Client) {
     const chestPath = findPath(matrix, { from: playerPos, to: chest })
     const ms = Date.now() - ts
 
-    console.log('path to chest took', ms, 'ms, length:', chestPath?.length)
-
     if (!chestPath) {
         throw Error('chest is unreachable', { cause: { chest, playerPos } })
     } else if (!chestPath.length) {
@@ -438,15 +436,13 @@ function wantToFindEnemy(client: Client) {
     while (sorted.length) {
         const { distance, pos: closestPos } = sorted.pop()!
 
-        console.log('closest mob is located at', posToStr(closestPos),
-            'with a distance of', Math.round(distance),
-            'to the player at', posToStr(playerPos))
+        console.log('closest:', posToStr(closestPos),
+            'dist:', Math.round(distance),
+            'player:', posToStr(playerPos))
 
         const ts = Date.now()
         const mobPath = findPath(matrix, { from: playerPos, to: closestPos })
         const ms = Date.now() - ts
-
-        console.log('path to mob took', ms, 'ms, length:', mobPath?.length)
 
         if (!mobPath) {
             console.log('unreachable, picking next')
@@ -460,11 +456,13 @@ function wantToFindEnemy(client: Client) {
             const mobTargetId = targetMobPos
                     && client.map!.mobTargetIdByPos.get(posToStr(targetMobPos))
 
-            if (mobTargetId) {
-                console.log('setting target:', mobTargetId)
-                client.send('set_target', { target: mobTargetId })
-            } else {
-                console.log('mob target id not found')
+            if (goal !== LogicGoal.GO_TO_ENEMY) {
+                if (mobTargetId) {
+                    console.log('setting target:', mobTargetId)
+                    client.send('set_target', { target: mobTargetId })
+                } else {
+                    console.log('mob target id not found')
+                }
             }
 
             path = mobPath

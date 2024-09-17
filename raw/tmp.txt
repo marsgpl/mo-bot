@@ -1,0 +1,78 @@
+-------------------------------------
+ws: unknown action: {"action":"show_rules","with_callback":true}
+----------------------------------------
+ws: unknown action: {"action":"hide_rules"}
+----------------------------------------
+
+non-aggressive can spawn
+exclude it from avail tiles
+remove from excl when dead or invis
+
+5:::{"name":"run_from_fight","args":[{"sk":"xx"}]}
+after 3 hits can move
+
+whisper message: {"action":"message","data":{"name":"margus","to":"xor","color":"#3BEEEE","type":"whisper","message":"hi","id":"1123721"}}
+
+// 5:::{"name":"set_target","args":[{"target":11716,"sk":".."}]}
+5:::{"name":"set_target","args":[{"target":11708,"sk":"xx"}]}
+function sendSetTarget(targetId: number) {
+    logicSend('set_target', {
+        target: targetId,
+        sk: logic.runtime.sk,
+    })
+}
+
+// 5:::{"name":"use_magic","args":[{"slot":0,"sk":"(sk)"}]}
+function sendUseMagic(slotIndex: number) {
+    logicSend('use_magic', {
+        slot: slotIndex,
+        sk: logic.runtime.sk,
+    })
+}
+
+current:
+    map
+    pos
+    health
+    combat level
+
+    att xp
+    def xp
+    str xp
+    hp xp
+    magic xp
+
+    invisible/dead mobs (recover by timeout)
+
+    free inventory slots (my_data)
+    avail food
+    food id in config.json
+
+each magic slots casts left (my_data)
+
+
+
+if not fighting:
+    walk to monster
+    wait for 1s to be attacked
+
+if fighting:
+    wait for monster death
+    -> if not fighting
+
+if captcha: pause
+
+show "being attacked"
+show "+ xp"
+show "damage"
+
+if inventory space <= 1: go to chest
+open chest
+deposit all unequipped
+get some food
+
+if health below 50:
+    eat
+        if no food: go to chest
+
+if food amount < 2: go to chest
