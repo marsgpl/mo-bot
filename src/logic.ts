@@ -273,8 +273,9 @@ function wantToEat(client: Client) {
         console.log('no food to eat, want chest')
         return wantChest(client)
     } else {
-        if (lastEatTime && Date.now() - lastEatTime < 5000) {
-            console.log('eating threshold reached, waiting')
+        if (lastEatTime && Date.now() - lastEatTime < 15000) {
+            console.log('eating threshold reached')
+            wantToCheckMissingHp(client)
             return
         }
         lastEatTime = Date.now()
@@ -317,6 +318,11 @@ function wantToCheckMissingHp(client: Client) {
     const needToEat = missingHp >= client.config.hpPerFood
 
     console.log('missing hp:', missingHp)
+
+    if (lastEatTime && Date.now() - lastEatTime < 15000) {
+        console.log('eating threshold reached')
+        return wantBagFreeSpace(client)
+    }
 
     if (needToEat) {
         // console.log('need to eat')
