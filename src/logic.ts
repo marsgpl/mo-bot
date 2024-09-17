@@ -65,6 +65,8 @@ export function logic(client: Client, event: LogicEvent) {
         return queue.push(event)
     }
 
+    console.log('🟣', 'logic event:', event)
+
     switch (event) {
         case LogicEvent.ATTACKING: return onBattleStart(client)
         case LogicEvent.DEFENDING: return onBattleStart(client)
