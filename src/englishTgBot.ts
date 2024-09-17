@@ -78,7 +78,7 @@ export function sendEnglishTgBot(client: Client, text: string) {
     if (englishTgBotMention
         && englishTgBotAdminUsername
         && text.toLowerCase().match(englishTgBotMention.toLowerCase())
-        && text.substring(0, englishTgBotAdminUsername.length + 1) !== englishTgBotAdminUsername + ':'
+        && text.substring(0, englishTgBotMention.length + 1) !== englishTgBotMention + ':'
     ) {
         text += ' @' + englishTgBotAdminUsername
     }
