@@ -49,6 +49,7 @@ let targetMobPos: Position | undefined = undefined
 let pathWaitForConfirm = false
 let wfbTmt: NodeJS.Timeout | undefined = undefined
 let wfChestWithdrawTmt: NodeJS.Timeout | undefined = undefined
+let lastEatTime: number | undefined = undefined
 
 export function logic(client: Client, event: LogicEvent) {
     if (client.isDisconnected) {
@@ -272,6 +273,11 @@ function wantToEat(client: Client) {
         console.log('no food to eat, want chest')
         return wantChest(client)
     } else {
+        if (lastEatTime && Date.now() - lastEatTime < 5000) {
+            console.log('eating threshold reached, waiting')
+            return
+        }
+        lastEatTime = Date.now()
         console.log('eating ...')
         client.send('equip', { data: { id: foodId } })
         goal = LogicGoal.WAIT_FOR_HEAL
@@ -313,10 +319,10 @@ function wantToCheckMissingHp(client: Client) {
     console.log('missing hp:', missingHp)
 
     if (needToEat) {
-        console.log('need to eat')
+        // console.log('need to eat')
         return wantToEat(client)
     } else {
-        console.log('enough hp')
+        // console.log('enough hp')
         return wantBagFreeSpace(client)
     }
 }
@@ -328,10 +334,10 @@ function wantBagFreeSpace(client: Client) {
     console.log('free bag space:', freeSlots)
 
     if (needChest) {
-        console.log('need more space for loot')
+        // console.log('need more space for loot')
         return wantChest(client)
     } else {
-        console.log('enough space')
+        // console.log('enough space')
         return wantToHaveFoodInBag(client)
     }
 }
@@ -346,10 +352,10 @@ function wantToHaveFoodInBag(client: Client) {
     console.log('food pieces in bag:', pieces)
 
     if (needChest) {
-        console.log('need more food')
+        // console.log('need more food')
         return wantChest(client)
     } else {
-        console.log('enough food')
+        // console.log('enough food')
         return wantToFight(client)
     }
 }
@@ -358,7 +364,7 @@ function wantToFight(client: Client) {
     if (client.enemyTargetId) {
         return onBattleStart(client)
     } else {
-        console.log('want to fight')
+        // console.log('want to fight')
         return wantToFindEnemy(client)
     }
 }
@@ -483,7 +489,7 @@ function followChestPath(client: Client) {
         return
     }
 
-    wait(20).then(() => {
+    wait(40).then(() => {
         const { i, j } = tile
         client.send('move', { i, j, t: Date.now() })
         // console.log('🟠', JSON.stringify({ i, j, t: Date.now() }))
@@ -514,7 +520,7 @@ function followMobPath(client: Client) {
         return
     }
 
-    wait(20).then(() => {
+    wait(40).then(() => {
         const { i, j } = tile
         client.send('move', { i, j, t: Date.now() })
         // console.log('🟠', JSON.stringify({ i, j, t: Date.now() }))
