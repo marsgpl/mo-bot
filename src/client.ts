@@ -98,6 +98,7 @@ export interface Client extends ClientProps {
     inventory?: MoInvSlot[]
     chest?: MoChestSlot[]
     petInventory?: MoInvSlot[]
+    isUnderPenalty?: boolean
     serverTimeDeltaMs?: number
     send: (
         this: Client,

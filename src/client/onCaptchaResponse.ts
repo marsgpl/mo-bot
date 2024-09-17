@@ -8,7 +8,6 @@ export function onCaptchaResponse(this: Client, payload: KeyValue) {
     if (payload.status) {
         console.log('✅', 'captcha successfully solved')
         this.busyWithCaptcha = false
-        logic(this, LogicEvent.PENALTY_END)
         logic(this, LogicEvent.CAPTCHA_DONE)
         return
     }

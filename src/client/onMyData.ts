@@ -165,11 +165,15 @@ export function onMyData(this: Client, payload: KeyValue) {
     this.inventory = inventory
     this.petInventory = petInventory
 
-    if (isUnderPenalty) {
-        logic(this, LogicEvent.PENALTY_START)
-    } else {
-        logic(this, LogicEvent.PENALTY_END)
+    if (this.isUnderPenalty !== undefined
+        && this.isUnderPenalty !== isUnderPenalty
+    ) {
+        console.log(SEP)
+        console.log('under penalty:', isUnderPenalty)
+        console.log(SEP)
     }
+
+    this.isUnderPenalty = isUnderPenalty
 
     onHealthDelta(this, { curHealth, maxHealth })
 

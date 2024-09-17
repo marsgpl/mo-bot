@@ -26,8 +26,6 @@ export const enum LogicEvent {
     MY_DATA = 'MY_DATA', // server sends my_data if action failed
     CHEST_OPENED = 'CHEST_OPENED', // now we can withdraw and deposit
     INVENTORY_CHANGED = 'INVENTORY_CHANGED',
-    PENALTY_START = 'PENALTY_START',
-    PENALTY_END = 'PENALTY_END',
 }
 
 const enum LogicGoal {
@@ -53,7 +51,6 @@ let wfbTmt: NodeJS.Timeout | undefined = undefined
 let wfChestWithdrawTmt: NodeJS.Timeout | undefined = undefined
 let wfChestOpenTmt: NodeJS.Timeout | undefined = undefined
 let lastEatTime: number | undefined = undefined
-let underCaptchaAboutToStart: boolean = false
 
 export function logic(client: Client, event: LogicEvent) {
     if (client.isDisconnected) {
@@ -62,7 +59,7 @@ export function logic(client: Client, event: LogicEvent) {
         return
     }
 
-    if (client.busyWithCaptcha || underCaptchaAboutToStart) {
+    if (client.busyWithCaptcha) {
         console.log('logic called but captcha is active. queuing')
         clearAllTmts()
         return queue.push(event)
@@ -74,8 +71,6 @@ export function logic(client: Client, event: LogicEvent) {
         case LogicEvent.ATTACKING: return onBattleStart(client)
         case LogicEvent.DEFENDING: return onBattleStart(client)
         case LogicEvent.CAPTCHA_DONE: return onCaptchaDone(client)
-        case LogicEvent.PENALTY_START: return onCaptchaAboutToStart()
-        case LogicEvent.PENALTY_END: return onCaptchaDone(client)
     }
 
     switch (goal) {
@@ -97,10 +92,6 @@ export function logic(client: Client, event: LogicEvent) {
     }
 }
 
-function onCaptchaAboutToStart() {
-    underCaptchaAboutToStart = true
-}
-
 function clearAllTmts() {
     if (wfbTmt) {
         clearTimeout(wfbTmt)
@@ -119,8 +110,6 @@ function clearAllTmts() {
 }
 
 function onCaptchaDone(client: Client) {
-    underCaptchaAboutToStart = false
-
     while (queue.length) {
         const event = queue.shift()!
         console.log('processing queue event:', event)
