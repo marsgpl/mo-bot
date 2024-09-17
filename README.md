@@ -71,4 +71,6 @@ ssh root@xx.xx.xx.xx
     nohup npm start > bot.log 2>&1 &
     watch -n 1 -- tail -n 40 bot.log
     df -h
+    crontab -e
+    */5 * * * * /user/bot/mo-bot/watchdog.sh > /user/bot/mo-bot/watchdog.log 2>&1
 ```
