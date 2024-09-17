@@ -37,7 +37,14 @@ export function onCaptcha(this: Client, payload: KeyValue) {
         console.log('captcha solved, sending:', answer)
         this.send('captcha', { value: answer })
     }).catch(error => {
-        throw Error('anti-captcha failed', { cause: error })
+        console.log('anti-captcha failed:', error)
+
+        if (isLastAttempt) {
+            throw Error('can not refresh captcha', { cause: payload })
+        }
+
+        console.log('refreshing captcha')
+        this.send('captcha', { sub: 'refresh' })
     })
 }
 
