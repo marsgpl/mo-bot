@@ -12,3 +12,12 @@ toggle_multicombat { block_multicombat: true }
 guild { sub: "visit" }
 guild { sub: "create", type: "coins" }
 guild { sub: "create", type: "mos" }
+
+refactor logic
+fix movement (and merge chest/mob movement)
+if random mob spawns, do not walk that tile
+better captcha guessing: if one of worker fails, do not ask next captcha right away, try with what we have (and check for ===5 digit)
+optimize timeouts
+hardcoded chest id fix
+refactor client.map format - include targetIds
+refactor position-to-string thing, use hash-to-number
